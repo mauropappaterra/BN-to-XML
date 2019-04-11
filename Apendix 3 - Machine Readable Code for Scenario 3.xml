@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bayes_network>
+  <!-- Scenario 3: Obtaining Username and Password -->
+
+  <!-- Define Nodes-->
+  <node type="leaf" id="bac">Broken Access Control</node>
+  <node type="leaf" id="bfa">Brute Force Attack</node>
+  <node type="leaf" id="xsf">Cross-Site Request Forgery</node>
+  <node type="leaf" id="uid">Unsanitized Input Data</node>
+  <node type="leaf" id="dmm">Defense Mechanism Misconfiguration</node>
+  <node type="leaf" id="ba">Blind Attack</node>
+  <node type="leaf" id="ps">Packet Sniffing</node>
+  <node type="leaf" id="xss">Cross Site Scripting (XSS) Attack</node>
+
+  <node type="middle" id="sia">SQL Injection Attack</node>
+  <node type="middle" id="ili">Intercepting Login Information</node>
+  <node type="middle" id="sas">Sniffing Authenticated Session</node>
+  <node type="middle" id="ips">IP Spoofing</node>
+  <node type="middle" id="asid">Access to Stored Session ID</node>
+  <node type="middle" id="sh">Session Hijacking</node>
+
+  <node type="root" id="av">Authentication Violation</node>
+
+  <!-- Assign Node Relations -->
+  <relation parent="sia" child="uid" configuration="OR"></relation>
+  <relation parent="sia" child="dmm" configuration="OR"></relation>
+
+  <relation parent="ili" child="sia" configuration="OR"></relation>
+  <relation parent="ili" child="bac" configuration="OR"></relation>
+  <relation parent="ili" child="bfa" configuration="OR"></relation>
+  <relation parent="ili" child="xsf" configuration="OR"></relation>
+
+  <relation parent="sas" child="ps" configuration="OR"></relation>
+  <relation parent="ips" child="sas" configuration="OR"></relation>
+  <relation parent="ips" child="ba" configuration="OR"></relation>
+
+  <relation parent="asid" child="xss" configuration="OR"></relation>
+
+  <relation parent="sh" child="ips" configuration="OR"></relation>
+  <relation parent="sh" child="asid" configuration="OR"></relation>
+
+  <relation parent="av" child="ili" configuration="OR"></relation>
+  <relation parent="av" child="sh" configuration="OR"></relation>
+
+  <!-- Populate Leave Nodes CPTs -->
+  <probability node = "bac">
+    <state label='True'>0.10</state>
+    <state label='False'>0.90</state>
+  </probability>
+
+  <probability node = "bfa">
+    <state label='True'>0.03</state>
+    <state label='False'>0.97</state>
+  </probability>
+
+  <probability node = "xsf">
+    <state label='True'>0.12</state>
+    <state label='False'>0.88</state>
+  </probability>
+
+  <probability node = "uid">
+    <state label='True'>0.05</state>
+    <state label='False'>0.95</state>
+  </probability>
+
+  <probability node = "dmm">
+    <state label='True'>0.18</state>
+    <state label='False'>0.82</state>
+  </probability>
+
+  <probability node = "ba">
+    <state label='True'>0.30</state>
+    <state label='False'>0.70</state>
+  </probability>
+
+  <probability node = "ps">
+    <state label='True'>0.65</state>
+    <state label='False'>0.35</state>
+  </probability>
+
+  <probability node = "xss">
+    <state label='True'>0.20</state>
+    <state label='False'>0.80</state>
+  </probability>
+
+  <!-- Populate Middle Nodes CPTs -->
+  <probability node="sia">
+
+    <conditional node= "uid" state="True">
+      <state label='True'>0.30</state>
+      <state label='False'>0.70</state>
+    </conditional>
+
+    <conditional node= "uid" state="False">
+      <state label='True'>0.00</state>
+      <state label='False'>1.00</state>
+    </conditional>
+
+    <conditional node= "dmm" state="True">
+      <state label='True'>0.30</state>
+      <state label='False'>0.70</state>
+    </conditional>
+
+    <conditional node= "dmm" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional>
+
+  </probability>
+
+  <probability node="ili">
+
+    <conditional node= "bac" state="True">
+      <state label='True'>0.45</state>
+      <state label='False'>0.65</state>
+    </conditional>
+
+    <conditional node= "bac" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional>
+
+    <conditional node= "bfa" state="True">
+      <state label='True'>0.45</state>
+      <state label='False'>0.65</state>
+    </conditional>
+
+    <conditional node= "bfa" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional>
+
+    <conditional node= "sia" state="True">
+      <state label='True'>0.45</state>
+      <state label='False'>0.65</state>
+    </conditional>
+
+    <conditional node= "sia" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional>
+
+    <conditional node= "xsf" state="True">
+      <state label='True'>0.45</state>
+      <state label='False'>0.65</state>
+    </conditional>
+
+    <conditional node= "xsf" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional>
+
+  </probability>
+
+  <probability node="sas">
+
+    <conditional node= "ps" state="True">
+      <state label='True'>0.25</state>
+      <state label='False'>0.75</state>
+    </conditional>
+
+    <conditional node= "ps" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional>
+
+  </probability>
+
+  <probability node="ips">
+
+    <conditional node= "sas" state="True">
+      <state label='True'>0.20</state>
+      <state label='False'>0.80</state>
+    </conditional>
+
+    <conditional node= "sas" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional>
+
+    <conditional node= "ba" state="True">
+      <state label='True'>0.20</state>
+      <state label='False'>0.80</state>
+    </conditional>
+
+    <conditional node= "ba" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional>
+
+  </probability>
+
+  <probability node="asid">
+
+    <conditional node= "xss" state="True">
+      <state label='True'>0.50</state>
+      <state label='False'>0.50</state>
+    </conditional>
+
+    <conditional node= "xss" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional>
+
+  </probability>
+
+  <probability node="sh">
+
+    <conditional node= "ips" state="True">
+      <state label='True'>0.75</state>
+      <state label='False'>0.25</state>
+    </conditional>
+
+    <conditional node= "ips" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional>
+
+    <conditional node= "asid" state="True">
+      <state label='True'>0.75</state>
+      <state label='False'>0.25</state>
+    </conditional>
+
+    <conditional node= "asid" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional>
+
+  </probability>
+
+</bayes_network>

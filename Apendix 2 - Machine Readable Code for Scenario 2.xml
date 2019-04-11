@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bayes_network>
+  <!-- Scenario 2: Obtaining Username and Password  -->
+
+  <!-- Define Nodes-->
+  <node type="leaf" id="ptf">Plain Text File</node>
+  <node type="leaf" id="ef">Encrypted File</node>
+  <node type="leaf" id="cs">Credential Stuffing</node>
+  <node type="leaf" id="ga">Guessing Attack</node>
+  <node type="leaf" id="bfa">Brute Force Attack</node>
+  <node type="leaf" id="si">Stolen Information</node>
+  <node type="leaf" id="cf">Coersive Force</node>
+  <node type="leaf" id="xsf">Cross-Site Request Forgery</node>
+  <node type="leaf" id="kl">Key Logger</node>
+  <node type="leaf" id="se">Social Engineering</node>
+
+  <node type="middle" id="df">File is Decrypted</node>
+  <node type="middle" id="fs">From System</node>
+  <node type="middle" id="fu">From User</node>
+  <node type="middle" id="oup">Obtaining Username and Password</node>
+
+  <node type="root" id="av">Authentication Violation</node>
+
+  <!-- Assign Node Relations -->
+  <relation parent="ef" child="df" configuration="OR"></relation>
+  <relation parent="ptf" child="fs" configuration="XOR"></relation>
+  <relation parent="df" child="fs" configuration="XOR"></relation>
+
+  <relation parent="si" child="fu" configuration="OR"></relation>
+  <relation parent="cf" child="fu" configuration="OR"></relation>
+  <relation parent="xsf" child="fu" configuration="OR"></relation>
+  <relation parent="kl" child="fu" configuration="OR"></relation>
+  <relation parent="se" child="fu" configuration="OR"></relation>
+
+  <relation parent="fs" child="oup" configuration="XOR"></relation>
+  <relation parent="fu" child="oup" configuration="XOR"></relation>
+  <relation parent="cs" child="oup" configuration="XOR"></relation>
+  <relation parent="ga" child="oup" configuration="XOR"></relation>
+  <relation parent="bfa" child="oup" configuration="XOR"></relation>
+
+  <relation parent="oup" child="av" configuration="OR"></relation>
+
+  <!-- Populate Leave Nodes CPTs -->
+  <probability node = "ptf">
+    <state label='True'>0.0</state>
+    <state label='False'>1.0</state>
+  </probability>
+
+  <probability node = "ef">
+    <state label='True'>1.0</state>
+    <state label='False'>0.0</state>
+  </probability>
+
+  <probability node = "cs">
+    <state label='True'>0.15</state>
+    <state label='False'>0.85</state>
+  </probability>
+
+  <probability node = "ga">
+    <state label='True'>0.05</state>
+    <state label='False'>0.95</state>
+  </probability>
+
+  <probability node = "bfa">
+    <state label='True'>0.03</state>
+    <state label='False'>0.97</state>
+  </probability>
+
+  <probability node = "si">
+    <state label='True'>0.02</state>
+    <state label='False'>0.98</state>
+  </probability>
+
+  <probability node = "cf">
+    <state label='True'>0.01</state>
+    <state label='False'>0.99</state>
+  </probability>
+
+  <probability node = "xsf">
+    <state label='True'>0.12</state>
+    <state label='False'>0.88</state>
+  </probability>
+
+  <probability node = "kl">
+    <state label='True'>0.02</state>
+    <state label='False'>0.98</state>
+  </probability>
+
+  <probability node = "se">
+    <state label='True'>0.20</state>
+    <state label='False'>0.80</state>
+  </probability>
+
+  <!-- Populate Middle Nodes CPTs -->
+  <probability node="df">
+
+    <conditional node= "ef" state="True">
+      <state label='True'>0.05</state>
+      <state label='False'>0.95</state>
+    </conditional>
+
+    <conditional node= "ef" state="False">
+      <state label='True'>1.0</state>
+      <state label='False'>0.0</state>
+    </conditional>
+
+  </probability>
+
+</bayes_network>

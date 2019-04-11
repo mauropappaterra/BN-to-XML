@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bayes_network>
+  <!-- Scenario 1: Attacker gets Access to Internal System -->
+
+  <!-- Define Nodes-->
+  <node type="leaf" id="un">User Connects to Untrusted Network</node>
+  <node type="leaf" id="mw">User Access Malicious Website</node>
+  <node type="leaf" id="im">User Connects Infected Removable Media to the System</node>
+  <node type="leaf" id="iw">User Access Website Infected with Malware</node>
+  <node type="leaf" id="spe">User Opens Spear Pishing Email</node>
+  <node type="leaf" id="zdv">Exploitation of Zero-Day Vulnerability</node>
+
+  <node type="middle" id="kv">Using Components with Known Vulnerabilities</node>
+  <node type="middle" id="euv">Exploitation of Unpatched Vulnerability</node>
+  <node type="middle" id="bd">Attacker Installs Backdoor on Target System</node>
+  <node type="middle" id="aic">Attacker Gets Access to Internal System</node>
+
+  <node type="root" id="av">Authentication Violation</node>
+
+  <!-- Assign Node Relations -->
+  <relation parent="un" child="kv" configuration="OR"></relation>
+  <relation parent="mw" child="kv" configuration="OR"></relation>
+  <relation parent="im" child="kv" configuration="OR"></relation>
+  <relation parent="iw" child="kv" configuration="OR"></relation>
+  <relation parent="spe" child="kv" configuration="OR"></relation>
+  <relation parent="kv" child="euv" configuration="OR"></relation>
+  <relation parent="euv" child="bd" configuration="OR"></relation>
+  <relation parent="zdv" child="bd" configuration="OR"></relation>
+  <relation parent="bd" child="aic" configuration="OR"></relation>
+  <relation parent="aic" child="av" configuration="OR"></relation>
+
+  <!-- Populate Leave Nodes CPTs -->
+  <probability node = "un">
+    <state label='True'>0.24</state>
+    <state label='False'>0.76</state>
+  </probability>
+
+  <probability node = "mw">
+    <state label='True'>0.08</state>
+    <state label='False'>0.92</state>
+  </probability>
+
+  <probability node = "im">
+    <state label='True'>0.02</state>
+    <state label='False'>0.98</state>
+  </probability>
+
+  <probability node = "iw">
+    <state label='True'>0.09</state>
+    <state label='False'>0.91</state>
+  </probability>
+
+  <probability node = "spe">
+    <state label='True'>0.03</state>
+    <state label='False'>0.97</state>
+  </probability>
+
+  <probability node="zdv">
+    <state label='True'>0.03</state>
+    <state label='False'>0.97</state>
+  </probability>
+
+  <!-- Populate Middle Nodes CPTs -->
+  <probability node="euv">
+
+    <conditional node= "kv" state="True">
+      <state label='True'>0.6</state>
+      <state label='False'>0.4</state>
+    </conditional>
+
+    <conditional node="kv" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional >
+
+  </probability>
+
+  <probability node="bd">
+
+    <conditional node="euv" state="True">
+      <state label='True'>0.85</state>
+      <state label='False'>0.15</state>
+    </conditional>
+
+    <conditional node="euv" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional>
+
+  </probability>
+
+  <probability node="aic">
+
+    <conditional node="bd" state="True">
+      <state label='True'>0.9</state>
+      <state label='False'>0.1</state>
+    </conditional>
+
+    <conditional node="bd" state="False">
+      <state label='True'>0.0</state>
+      <state label='False'>1.0</state>
+    </conditional>
+
+  </probability>
+
+</bayes_network>
