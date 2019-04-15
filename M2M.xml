@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<bayes_network>
+
+  <!-- Define Nodes-->
+  <node type="leaf" id="B">B Description</node>
+  <node type="leaf" id="D">D Description</node>
+  <node type="leaf" id="E">E Description</node>
+  <node type="leaf" id="F">F Description</node>
+  <node type="leaf" id="G">G Description</node>
+
+  <node type="middle" id="A">A Description</node>
+  <node type="middle" id="C">C Description</node>
+
+  <node type="root" id="root">Root Description</node>
+
+  <!-- Assign Node Relations -->
+  <relation parent="D" child="A" configuration="AND"></relation>
+  <relation parent="E" child="A" configuration="AND"></relation>
+  <relation parent="F" child="C" configuration="OR"></relation>
+  <relation parent="G" child="C" configuration="OR"></relation>
+  <relation parent="A" child="root" configuration="OR"></relation>
+  <relation parent="B" child="root" configuration="OR"></relation>
+  <relation parent="C" child="root" configuration="OR"></relation>
+
+  <!-- Populate Leave Nodes CPTs -->
+  <probability node = "D">
+    <state label='True'>0.5</state>
+    <state label='False'>0.5</state>
+  </probability>
+
+  <probability node = "E">
+    <state label='True'>0.1</state>
+    <state label='False'>0.9</state>
+  </probability>
+
+  <probability node = "F">
+    <state label='True'>0.6</state>
+    <state label='False'>0.4</state>
+  </probability>
+
+  <probability node = "G">
+    <state label='True'>0.8</state>
+    <state label='False'>0.2</state>
+  </probability>
+
+  <!-- Populate Middle Nodes CPTs -->
+  <probability node="C">
+
+    <conditional node= "F" state="True">
+      <state label='True'>0.75</state>
+      <state label='False'>0.25</state>
+    </conditional>
+
+    <conditional node= "F" state="False">
+      <state label='True'>1.0</state>
+      <state label='False'>0.0</state>
+    </conditional>
+
+    <conditional node= "G" state="True">
+      <state label='True'>0.75</state>
+      <state label='False'>0.25</state>
+    </conditional>
+
+    <conditional node= "G" state="False">
+      <state label='True'>1.0</state>
+      <state label='False'>0.0</state>
+    </conditional>
+
+  </probability>
+
+</bayes_network>
